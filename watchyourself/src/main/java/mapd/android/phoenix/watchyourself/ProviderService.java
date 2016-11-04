@@ -7,6 +7,7 @@ package mapd.android.phoenix.watchyourself;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -153,7 +154,14 @@ public class ProviderService extends SAAgent {
 //                }
 //            }).start();
 
-            Toast.makeText(getBaseContext(), "Fetch Button Pressed", Toast.LENGTH_SHORT).show();
+            String decodedDataUsingUTF8;
+            try {
+                decodedDataUsingUTF8 = new String(data, "UTF-8");
+                Toast.makeText(getBaseContext(), decodedDataUsingUTF8, Toast.LENGTH_SHORT).show();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
         }
 
         @Override

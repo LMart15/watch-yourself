@@ -29,7 +29,7 @@
 
     <application name="WatchYourselfProvider" >
         <serviceProfile
-            id="/sample/hello"
+            id="/mapd/android"
             name="watchyourself"
             role="provider"
             serviceImpl="mapd.android.phoenix.watchyourself.ProviderService"
