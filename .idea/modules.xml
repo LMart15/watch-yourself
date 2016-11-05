@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WatchYourself.iml" filepath="$PROJECT_DIR$/WatchYourself.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/watchyourself/watchyourself.iml" filepath="$PROJECT_DIR$/watchyourself/watchyourself.iml" />
+      <module fileurl="file://$PROJECT_DIR$/watch-yourself.iml" filepath="$PROJECT_DIR$/watch-yourself.iml" />
     </modules>
   </component>
 </project>
