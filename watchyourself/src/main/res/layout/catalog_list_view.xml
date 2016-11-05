@@ -14,7 +14,7 @@
         <ImageView
             android:id="@+id/ImageViewItem"
             android:layout_width="220dp"
-            android:layout_height="237dp"
+            android:layout_height="280dp"
             android:layout_centerHorizontal="true"
             android:src="@drawable/camera256"/>
 
