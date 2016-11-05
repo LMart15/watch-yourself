@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.content.Intent;
+import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -28,6 +29,12 @@ public class ProviderService extends SAAgent {
     private final IBinder mBinder = new LocalBinder();
     private ServiceConnection mConnectionHandler = null;
     Handler mHandler = new Handler();
+    String decodedDataUsingUTF8;
+    public final String emergencyMsgNotification = "EmergencyMsg";
+    public final String emergencyCallNotification = "EmergencyCall";
+    public final String emergencyVideoNotification = "EmergencyVideo";
+    public final String emergencyAudioNotification = "EmergencyAudio";
+
 
     public ProviderService() {
         super(TAG, SASOCKET_CLASS);
@@ -136,33 +143,36 @@ public class ProviderService extends SAAgent {
 
         @Override
         public void onReceive(int channelId, byte[] data) {
-//            if (mConnectionHandler == null) {
-//                return;
-//            }
-//            Calendar calendar = new GregorianCalendar();
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd aa hh:mm:ss.SSS");
-//            String timeStr = " " + dateFormat.format(calendar.getTime());
-//            String strToUpdateUI = new String(data);
-//            final String message = strToUpdateUI.concat(timeStr);
-//            new Thread(new Runnable() {
-//                public void run() {
-//                    try {
-//                        mConnectionHandler.send(getServiceChannelId(0), message.getBytes());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
 
-            String decodedDataUsingUTF8;
             try {
                 decodedDataUsingUTF8 = new String(data, "UTF-8");
-                Toast.makeText(getBaseContext(), decodedDataUsingUTF8, Toast.LENGTH_SHORT).show();
+
+                switch (decodedDataUsingUTF8) {
+                    case emergencyMsgNotification:
+                        //call emergencyMsgNotification related function
+                        Toast.makeText(getBaseContext(), "Emergency Message Sent", Toast.LENGTH_SHORT).show();
+                        break;
+                    case emergencyCallNotification:
+                        //call emergencyCallNotification related function
+                        Toast.makeText(getBaseContext(), "Emergency Call Initiated", Toast.LENGTH_SHORT).show();
+                        break;
+                    case emergencyVideoNotification:
+                        //call emergencyVideoNotification related function
+                        Toast.makeText(getBaseContext(), "Video Recorded", Toast.LENGTH_SHORT).show();
+                        break;
+                    case emergencyAudioNotification:
+                        //call emergencyAudioNotification related function
+                        Toast.makeText(getBaseContext(), "Audio Recorded", Toast.LENGTH_SHORT).show();
+                        break;
+
+                }
+
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
 
         }
+
 
         @Override
         protected void onServiceConnectionLost(int reason) {
