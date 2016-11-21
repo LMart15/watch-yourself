@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:watchyourself="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_watchyourself"
+          android:icon="@mipmap/ic_watchyourself_logo"
+          android:title="@string/action_watchyourself"
+          watchyourself:showAsAction="always"/>
+
+    <item android:id="@+id/action_help"
+          android:title="@string/action_help"
+          watchyourself:showAsAction="always"/>
+
+    <item android:id="@+id/add_emergencyContact"
+          android:title="@string/add_emergencyContact"
+          watchyourself:showAsAction="never" />
+
+    <item android:id="@+id/configure_message"
+          android:title="@string/configure_message"
+          watchyourself:showAsAction="ifRoom" />
+</menu>

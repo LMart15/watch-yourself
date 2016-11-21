@@ -5,4 +5,8 @@
     <string name="ConnectionTerminateddMsg">Service Connection with HelloAccessory(C) has been terminated.</string>
     <string name="ConnectionAlreadyExist">Service Connection has already been existed!!!</string>
     <string name="ConnectionAlreadyDisconnected">Service Connection has already been disconnected!!!</string>
+    <string name="action_help">Help</string>
+    <string name="action_watchyourself">WatchYourself</string>
+    <string name="add_emergencyContact">Add Emergency Contact</string>
+    <string name="configure_message">Configure Message</string>
 </resources>
