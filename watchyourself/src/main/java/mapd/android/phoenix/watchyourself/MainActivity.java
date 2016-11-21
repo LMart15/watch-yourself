@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent(MainActivity.this, ProviderService.class);
+        startService(intent);
 
         wyimages = ImagesList.getCatalog(getResources());
 
@@ -49,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Video Recoding Initiated.", Toast.LENGTH_LONG).show();
                 }
                 if(imageName.contains("Record Voice")) {
-                    Toast.makeText(getApplicationContext(), "Audio Recoding Initiated.", Toast.LENGTH_LONG).show();
+                   Intent intent = new Intent(MainActivity.this,RecordingList.class);
+                    startActivity(intent);
                 }
                 if(imageName.contains("Msg Emergency Contacts")) {
                     String phoneNo = "6475881235";
