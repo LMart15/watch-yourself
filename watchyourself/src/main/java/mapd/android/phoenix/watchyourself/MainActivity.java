@@ -1,9 +1,24 @@
 package mapd.android.phoenix.watchyourself;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -14,18 +29,37 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+
+import static android.provider.UserDictionary.Words.APP_ID;
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private List<WImages> wyimages;
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    private GoogleApiClient googleApiClient;
+    private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this, ProviderService.class);
         startService(intent);
+
+        askForLocationPermission();
 
         wyimages = ImagesList.getCatalog(getResources());
 
@@ -55,12 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 if(imageName.contains("Msg Emergency Contacts")) {
-                    String phoneNo = "6475881235";
-                    String message = "Emergency! Please locate and help me! ";
-
-                    /*SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(phoneNo, null, message, null, null);*/
-                    Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                    sendMessage();
                 }
                 if(imageName.contains("Call Emergency Contacts")) {
                     /*Intent in=new Intent(Intent.ACTION_CALL,Uri.parse("6477105918"));
@@ -112,5 +141,175 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+        public void sendMessage()
+        {
+            try {
 
+                String message = "Emergency! Please locate and help me! ";
+
+                SmsManager smsManager = SmsManager.getDefault();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
+                String value = sharedPreferences.getString("contact1","null");
+                if(value.equals("null"))
+                {
+                    Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    String[] arr=   value.split(":");
+                    String phoneno= arr[1];
+                    Log.e("phone no :: ",phoneno);
+                    smsManager.sendTextMessage(phoneno, null, message, null, null);
+
+
+                    Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                }
+            }
+            catch (SecurityException e)
+            {
+
+            }
+        }
+
+    /*
+    LOcation data
+     */
+
+    public void askForLocationPermission()
+    {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+                    PERMISSION_ACCESS_COARSE_LOCATION);
+            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+        }
+        else
+        {
+            Log.e("$$$","###");
+            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+            getLocation();
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ACCESS_COARSE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // All good!
+                    mapLocation();
+                } else {
+                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (googleApiClient != null) {
+            googleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(MainActivity.class.getSimpleName(), "Connected to Google Play Services!");
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+            double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
+    }
+
+public String mapLocation() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+        Log.e("inside map location","###");
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+        double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+            String cityName = addresses.get(0).getAddressLine(0);
+            String stateName = addresses.get(0).getAddressLine(1);
+            String countryName = addresses.get(0).getAddressLine(2);
+            Log.e("place",addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+        }
+        catch(Exception e){}
+    }
+    else
+    {
+        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+                PERMISSION_ACCESS_COARSE_LOCATION);
+    }
+    return "";
+}
+    protected void getLocation() {
+         String  bestProvider="";
+        if (isLocationEnabled(MainActivity.this)) {
+            LocationManager locationManager = (LocationManager)  this.getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+            //You can still do this if you like, you might get lucky:
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            if (location != null) {
+                Log.e("TAG", "GPS is on");
+               double latitude = location.getLatitude();
+               double longitude = location.getLongitude();
+                Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    String cityName = addresses.get(0).getAddressLine(0);
+                    String stateName = addresses.get(0).getAddressLine(1);
+                    String countryName = addresses.get(0).getAddressLine(2);
+                    Log.e("place",addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", "+cityName +", "+ addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                }
+                catch(Exception e){}
+            }
+            }
+            else{
+                //This is what you need:
+               // locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+            }
+        }
+        else
+        {
+            //prompt user to enable location....
+            //.................
+        }
+    }
+    public static boolean isLocationEnabled(Context context)
+    {
+        //...............
+        return true;
+    }
 }

@@ -19,7 +19,8 @@ import android.view.View;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
         import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -59,10 +60,7 @@ public class RecordingList extends AppCompatActivity {
         stop= (Button)findViewById(R.id.btn_stop);
         stop.setEnabled(false);
         getFiles();
-        if(files.size()>0)
-        {
-            listView.setAdapter(new ListAda());
-        }
+
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +82,28 @@ public class RecordingList extends AppCompatActivity {
                 Toast.makeText(RecordingList.this, "Recording Completed",
                         Toast.LENGTH_LONG).show();
                 getFiles();
-                listView.setAdapter(new ListAda());
+
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                File f = new File(files.get(position).get("filePath"));
+                if(f.isFile())
+                {
+                    f.delete();
+                    Toast.makeText(RecordingList.this,"File has been deleted",Toast.LENGTH_LONG).show();
+                   getFiles();
+
+                }
+                else
+                {
+                    Log.e("ERROR","No file exist");
+                }
+                return false;
             }
         });
     }
@@ -105,6 +124,9 @@ public class RecordingList extends AppCompatActivity {
                 files.add(map);
             }
         }
+
+            listView.setAdapter(new ListAda());
+
     }
 
     class ListAda extends BaseAdapter{
@@ -163,6 +185,7 @@ public class RecordingList extends AppCompatActivity {
                                         mp.setDataSource(path);
                                         mp.prepare();
                                         mp.start();
+                                        Toast.makeText(RecordingList.this,"File size   "+mp.getDuration(),Toast.LENGTH_LONG).show();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -191,8 +214,8 @@ public class RecordingList extends AppCompatActivity {
         if (checkPermission()) {
 
             AudioSavePathInDevice =
-                    getFilesDir().getAbsolutePath() + "/" +
-                            getCurrentTimeStamp() + "AudioRecording.3gp";
+                    getFilesDir().getAbsolutePath() + "/Audio" +
+                            getCurrentTimeStamp() + ".3gp";
 
             MediaRecorderReady();
 
@@ -239,7 +262,7 @@ public class RecordingList extends AppCompatActivity {
     }
 
     public String getCurrentTimeStamp() {
-        return new SimpleDateFormat("yyyyMMdd_HH:mm_").format(new Date());
+        return new SimpleDateFormat("yyyyMMdd_HH_mm_ss").format(new Date());
     }
 
     private void requestPermission() {

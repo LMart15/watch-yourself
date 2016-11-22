@@ -21,6 +21,7 @@ import java.util.Random;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
@@ -244,10 +245,22 @@ public class ProviderService extends SAAgent {
                                             String message = "Emergency! Please locate and help me! ";
 
                                             SmsManager smsManager = SmsManager.getDefault();
-                                            smsManager.sendTextMessage(EmergContact1, null, message, null, null);
+
+                                            SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
+                                            String value = sharedPreferences.getString("contact1","null");
+                                            if(value.equals("null"))
+                                            {
+                                                Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                                            }
+                                            else {
+                                             String[] arr=   value.split(":");
+                                                EmergContact1= arr[1];
+                                                Log.e("phone no :: ",EmergContact1);
+                                                smsManager.sendTextMessage(EmergContact1, null, message, null, null);
 
 
-                                            Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                         catch (SecurityException e)
                                         {
@@ -469,9 +482,9 @@ public class ProviderService extends SAAgent {
         public void startRecording (){
 
 
-                AudioSavePathInDevice =
-                        getFilesDir().getAbsolutePath() + "/" +
-                                "AudioRecording" + getCurrentTimeStamp() + ".3gp";
+            AudioSavePathInDevice =
+                    getFilesDir().getAbsolutePath() + "/Audio" +
+                            getCurrentTimeStamp() + ".3gp";
 
                 MediaRecorderReady();
 
@@ -494,9 +507,13 @@ public class ProviderService extends SAAgent {
         }
 
         public void stopRecording() {
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
+            Log.e("before recording stop","@@@@@");
+            if(mRecorder!=null) {
+                mRecorder.stop();
+                Log.e("before recording stop","!!!!!!");
+                mRecorder.release();
+                mRecorder = null;
+            }
         }
 public void requestAudioPermissions(){
 
@@ -526,7 +543,7 @@ public void requestAudioPermissions(){
     }
 
     public String getCurrentTimeStamp() {
-        return new SimpleDateFormat("_yyyyMMdd_HH:mm").format(new Date());
+        return new SimpleDateFormat("_yyyyMMdd_HH_mm_ss").format(new Date());
     }
 
 }
