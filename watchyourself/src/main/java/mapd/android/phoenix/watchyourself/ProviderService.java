@@ -23,12 +23,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -39,6 +43,9 @@ import android.telephony.SmsManager;
 import android.widget.Toast;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.accessory.*;
 
@@ -46,6 +53,8 @@ import mapd.android.phoenix.watchyourself.library.PermissionEverywhere;
 import mapd.android.phoenix.watchyourself.library.PermissionResponse;
 import mapd.android.phoenix.watchyourself.library.PermissionResultCallback;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CALL_PHONE;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -54,7 +63,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 import static android.provider.MediaStore.Audio.Media.RECORD_SOUND_ACTION;
 
-public class ProviderService extends SAAgent {
+public class ProviderService extends SAAgent implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "HelloAccessory(P)";
     private static final Class<ServiceConnection> SASOCKET_CLASS = ServiceConnection.class;
     private final IBinder mBinder = new LocalBinder();
@@ -80,8 +89,16 @@ public class ProviderService extends SAAgent {
     //final File dir = new File(this.getFilesDir() + "/nfs/guille/groce/users/nicholsk/workspace3/SQLTest");
 
 
-
-
+    /*
+    Location Variables
+     */
+    private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
+    private GoogleApiClient googleApiClient;
+    private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
+    String locationLink;
+    /*
+    Location Variables
+     */
 
     public ProviderService() {
         super(TAG, SASOCKET_CLASS);
@@ -222,8 +239,8 @@ public class ProviderService extends SAAgent {
                                 protected Boolean doInBackground(Void... params) {
                                     PermissionResponse response = null;
                                     try {
-                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS},
-                                                12, "Watch Yourself", "This app needs messaging permission", R.mipmap.ic_launcher).call();
+                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
+                                                12, "Watch Yourself", "This app needs messaging and location permission", R.mipmap.ic_launcher).call();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -240,9 +257,10 @@ public class ProviderService extends SAAgent {
                                     Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
+                                        getLocation();
                                         try {
 
-                                            String message = "Emergency! Please locate and help me! ";
+                                            String message = "Emergency! Please locate and help me! "+locationLink;
 
                                             SmsManager smsManager = SmsManager.getDefault();
 
@@ -274,7 +292,7 @@ public class ProviderService extends SAAgent {
                         }else {
 
 
-                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS},
+                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
                                     12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
@@ -545,5 +563,115 @@ public void requestAudioPermissions(){
     public String getCurrentTimeStamp() {
         return new SimpleDateFormat("_yyyyMMdd_HH_mm_ss").format(new Date());
     }
+ /*
+    LOcation data
+     */
 
+//    public void askForLocationPermission()
+//    {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(getApplicationContext(), new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+//                    PERMISSION_ACCESS_FINE_LOCATION);
+//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+//        }
+//        else
+//        {
+//            Log.e("$$$","###");
+//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
+//            getLocation();
+//        }
+//
+//
+//    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        switch (requestCode) {
+//            case PERMISSION_ACCESS_FINE_LOCATION:
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // All good!
+//                    getLocation();
+//                } else {
+//                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                break;
+//        }
+//    }
+
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (googleApiClient != null) {
+//            googleApiClient.connect();
+//        }
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        googleApiClient.disconnect();
+//        super.onStop();
+//    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(MainActivity.class.getSimpleName(), "Connected to Google Play Services!");
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+            double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
+    }
+
+
+    protected void getLocation() {
+        String  bestProvider="";
+        if (isLocationEnabled(getApplicationContext())) {
+            LocationManager locationManager = (LocationManager)  this.getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+            //You can still do this if you like, you might get lucky:
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Location location = locationManager.getLastKnownLocation(bestProvider);
+                if (location != null) {
+                    Log.e("TAG", "GPS is on");
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    Toast.makeText(getApplicationContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                    locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
+
+                }
+            }
+            else{
+                //This is what you need:
+                // locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+            }
+        }
+        else
+        {
+            //prompt user to enable location....
+            //.................
+        }
+    }
+    public static boolean isLocationEnabled(Context context)
+    {
+        //...............
+        return true;
+    }
 }

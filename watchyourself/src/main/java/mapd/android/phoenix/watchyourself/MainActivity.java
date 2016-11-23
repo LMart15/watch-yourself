@@ -49,9 +49,10 @@ import static android.provider.UserDictionary.Words.APP_ID;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private List<WImages> wyimages;
-    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
+    String locationLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         {
             try {
 
-                String message = "Emergency! Please locate and help me! ";
+                String message = "Emergency! Please locate and help me! "+locationLink;
 
                 SmsManager smsManager = SmsManager.getDefault();
 
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-                    PERMISSION_ACCESS_COARSE_LOCATION);
+                    PERMISSION_ACCESS_FINE_LOCATION);
             googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
         }
         else
@@ -196,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_ACCESS_COARSE_LOCATION:
+            case PERMISSION_ACCESS_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // All good!
-                    mapLocation();
+                  getLocation();
                 } else {
                     Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
                 }
@@ -252,20 +253,12 @@ public String mapLocation() {
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
-            String cityName = addresses.get(0).getAddressLine(0);
-            String stateName = addresses.get(0).getAddressLine(1);
-            String countryName = addresses.get(0).getAddressLine(2);
-            Log.e("place",addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-        }
-        catch(Exception e){}
+        locationLink= "http://maps.google.com/?q="+lat+","+lon;
     }
     else
     {
-        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-                PERMISSION_ACCESS_COARSE_LOCATION);
+        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                PERMISSION_ACCESS_FINE_LOCATION);
     }
     return "";
 }
@@ -285,15 +278,8 @@ public String mapLocation() {
                double latitude = location.getLatitude();
                double longitude = location.getLongitude();
                 Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                try {
-                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                    String cityName = addresses.get(0).getAddressLine(0);
-                    String stateName = addresses.get(0).getAddressLine(1);
-                    String countryName = addresses.get(0).getAddressLine(2);
-                    Log.e("place",addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", "+cityName +", "+ addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-                }
-                catch(Exception e){}
+                 locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
+
             }
             }
             else{
