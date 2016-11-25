@@ -14,6 +14,8 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,9 +28,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,12 +52,19 @@ import java.util.Locale;
 
 import static android.provider.UserDictionary.Words.APP_ID;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private List<WImages> wyimages;
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     String locationLink;
+
+    /*
+    Video Recording Variables
+     */
+    MediaRecorder recorder;
+    SurfaceHolder holder;
+    boolean recording = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,44 +76,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         wyimages = ImagesList.getCatalog(getResources());
 
-        // Create the list
-        GridView listViewCatalog = (GridView) findViewById(R.id.ListViewCatalog);
-        listViewCatalog.setAdapter(new ImageAdapter(wyimages, getLayoutInflater()));
+        ImageButton msg_button = (ImageButton) findViewById(R.id.icon_msg);
+        ImageButton mic_button = (ImageButton) findViewById(R.id.icon_mic);
+        ImageButton camera_button = (ImageButton) findViewById(R.id.icon_camera);
+        ImageButton call_button = (ImageButton) findViewById(R.id.icon_call);
 
-        listViewCatalog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                WImages selectedImage;
-                String imageName;
-                List<WImages> catalog = ImagesList.getCatalog(getResources());
-                int productIndex = position;
-
-                selectedImage = catalog.get(productIndex);
-                imageName = selectedImage.title;
-
-                if(imageName.contains("Record Video")) {
-
-                    Toast.makeText(getApplicationContext(), "Video Recoding Initiated.", Toast.LENGTH_LONG).show();
-                }
-                if(imageName.contains("Record Voice")) {
-                   Intent intent = new Intent(MainActivity.this,RecordingList.class);
-                    startActivity(intent);
-                }
-                if(imageName.contains("Msg Emergency Contacts")) {
-                    sendMessage();
-                }
-                if(imageName.contains("Call Emergency Contacts")) {
-                    /*Intent in=new Intent(Intent.ACTION_CALL,Uri.parse("6477105918"));
-                    startActivity(in);*/
-                    Toast.makeText(getApplicationContext(), "Calling Emergency Contact.", Toast.LENGTH_LONG).show();
-                }
+        msg_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendMessage();
             }
         });
 
-    }
+        mic_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,RecordingList.class);
+                startActivity(intent);
+            }
+        });
 
+        camera_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendMessage();
+            }
+        });
+
+        call_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Calling Emergency Contact.", Toast.LENGTH_LONG).show();
+                makeCall();
+            }
+        });
+}
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater= getMenuInflater();
@@ -171,6 +177,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         }
+
+    public void makeCall() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact", 1);
+        String value = sharedPreferences.getString("contact1", "null");
+        if (value.equals("null")) {
+            Toast.makeText(getApplicationContext(), "Please add emergency contact details first.", Toast.LENGTH_LONG).show();
+        } else {
+            String[] arr = value.split(":");
+            String phoneno = arr[1];
+            Log.e("phone no :: ", phoneno);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, 3);
+
+            } else {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneno));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+
+                } catch (SecurityException e) {
+
+                }
+            }
+        }
+    }
 
     /*
     LOcation data
@@ -246,22 +279,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
     }
 
-public String mapLocation() {
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-        Log.e("inside map location","###");
-        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-
-        double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
-        locationLink= "http://maps.google.com/?q="+lat+","+lon;
-    }
-    else
-    {
-        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
-                PERMISSION_ACCESS_FINE_LOCATION);
-    }
-    return "";
-}
+//public String mapLocation() {
+//    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+//            == PackageManager.PERMISSION_GRANTED) {
+//        Log.e("inside map location","###");
+//        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+//
+//        double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+//        locationLink= "http://maps.google.com/?q="+lat+","+lon;
+//    }
+//    else
+//    {
+//        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+//                PERMISSION_ACCESS_FINE_LOCATION);
+//    }
+//    return "";
+//}
     protected void getLocation() {
          String  bestProvider="";
         if (isLocationEnabled(MainActivity.this)) {
@@ -298,4 +331,66 @@ public String mapLocation() {
         //...............
         return true;
     }
+    /*
+    Location code ends
+     */
+    /*
+    Video Recording
+     */
+//    private void initRecorder() {
+//        recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+//        recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+//
+//        CamcorderProfile cpHigh = CamcorderProfile
+//                .get(CamcorderProfile.QUALITY_HIGH);
+//        recorder.setProfile(cpHigh);
+//        recorder.setOutputFile("/sdcard/videocapture_example.mp4");
+//        recorder.setMaxDuration(50000); // 50 seconds
+//        recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+//    }
+//
+//    private void prepareRecorder() {
+//        recorder.setPreviewDisplay(holder.getSurface());
+//
+//        try {
+//            recorder.prepare();
+//        } catch (IllegalStateException e) {
+//            e.printStackTrace();
+//            finish();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            finish();
+//        }
+//    }
+//
+//    public void onClick(View v) {
+//        if (recording) {
+//            recorder.stop();
+//            recording = false;
+//
+//            // Let's initRecorder so we can record again
+//            initRecorder();
+//            prepareRecorder();
+//        } else {
+//            recording = true;
+//            recorder.start();
+//        }
+//    }
+//
+//    public void surfaceCreated(SurfaceHolder holder) {
+//        prepareRecorder();
+//    }
+//
+//    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+//                               int height) {
+//    }
+//
+//    public void surfaceDestroyed(SurfaceHolder holder) {
+//        if (recording) {
+//            recorder.stop();
+//            recording = false;
+//        }
+//        recorder.release();
+//        finish();
+//    }
 }

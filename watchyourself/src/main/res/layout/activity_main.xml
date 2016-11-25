@@ -3,18 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="5">
 
-    <GridView
-        android:id="@+id/ListViewCatalog"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#F44336"
+        android:layout_weight="2">
+        <ImageButton
+            android:id="@+id/icon_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_msg_192_blue"
+            android:background="@android:color/transparent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#757575"
         android:layout_weight="1"
-        android:background="#ff0000"
-        android:verticalSpacing="5px"
-        android:horizontalSpacing="5px"
-        android:cacheColorHint="#ffffff"
-        android:clickable="true"
-        android:numColumns="2">
-    </GridView>
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/icon_mic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_mic_64_white"
+            android:background="@android:color/transparent"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="32dp"
+            android:layout_centerVertical="true"/>
+
+        <!--<View-->
+            <!--android:id="@+id/view"-->
+            <!--android:layout_width="1dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="#FFFFFF"/>-->
+
+        <ImageButton
+            android:id="@+id/icon_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_camera_64_white"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:paddingRight="32dp"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F44336"
+        android:layout_weight="2">
+        <ImageButton
+            android:id="@+id/icon_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_call_192_blue"
+            android:background="@android:color/transparent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <!--<GridView-->
+        <!--android:id="@+id/ListViewCatalog"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="#ff0000"-->
+        <!--android:verticalSpacing="5px"-->
+        <!--android:horizontalSpacing="5px"-->
+        <!--android:cacheColorHint="#ffffff"-->
+        <!--android:clickable="true"-->
+        <!--android:numColumns="2">-->
+    <!--</GridView>-->
 </LinearLayout>
