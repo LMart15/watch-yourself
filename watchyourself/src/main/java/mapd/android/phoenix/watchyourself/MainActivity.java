@@ -1,5 +1,10 @@
 package mapd.android.phoenix.watchyourself;
 
+/**
+ * Team Phoenix
+ */
+
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -107,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater= getMenuInflater();
@@ -139,9 +144,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Intent intentC = new Intent(MainActivity.this, AddEmergencyContactsActivity.class);
                 startActivity(intentC);
                 return true;
-            case R.id.configure_message:
-                Intent intentM = new Intent(MainActivity.this, CreateEmergencyMessageActivity.class);
-                startActivity(intentM);
+//            case R.id.configure_message:
+//                Intent intentM = new Intent(MainActivity.this, CreateEmergencyMessageActivity.class);
+//                startActivity(intentM);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -310,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.e("TAG", "GPS is on");
                double latitude = location.getLatitude();
                double longitude = location.getLongitude();
-                Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
                  locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
 
             }

@@ -15,7 +15,7 @@
           android:title="@string/add_emergencyContact"
           watchyourself:showAsAction="never" />
 
-    <item android:id="@+id/configure_message"
-          android:title="@string/configure_message"
-          watchyourself:showAsAction="ifRoom" />
+    <!--<item android:id="@+id/configure_message"-->
+          <!--android:title="@string/configure_message"-->
+          <!--watchyourself:showAsAction="ifRoom" />-->
 </menu>

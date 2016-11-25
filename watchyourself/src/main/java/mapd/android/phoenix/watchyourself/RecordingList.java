@@ -1,8 +1,9 @@
 package mapd.android.phoenix.watchyourself;
 
 /**
- * Created by lawrence.martin on 2016-11-20.
+ * Team Phoenix
  */
+
 
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;

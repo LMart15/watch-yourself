@@ -1,5 +1,10 @@
 package mapd.android.phoenix.watchyourself;
 
+/**
+ * Team Phoenix
+ */
+
+
 public class WImages {
 
     public String title;
