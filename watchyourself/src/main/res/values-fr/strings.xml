@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Observez-vous</string>
+    <string name="record_video_label">Enregistrer une vidéo</string>
+    <string name="record_voice_label">Enregistrer la voix</string>
+    <string name="msg_contact_label">Envoyer un message d\'urgence</string>
+    <string name="emergency_call_label">Faire un appel d\'urgence</string>
+
+    <string name="ConnectionAcceptedMsg">Service Connection from HelloAccessory(C) has been accepted.</string>
+    <string name="ConnectionEstablishedMsg">Service Connection with HelloAccessory(C) has been established.</string>
+    <string name="ConnectionTerminateddMsg">Service Connection with HelloAccessory(C) has been terminated.</string>
+    <string name="ConnectionAlreadyExist">Service Connection has already been existed!!!</string>
+    <string name="ConnectionAlreadyDisconnected">Service Connection has already been disconnected!!!</string>
+    <string name="action_help">Help</string>
+    <string name="action_watchyourself">WatchYourself</string>
+    <string name="add_emergencyContact">Add Emergency Contact</string>
+    <string name="configure_message">Configure Message</string>
+    <string name="add_emergency_contact_header">Add Emergency Contact</string>
+    <string name="enter_name_label">Enter Name</string>
+    <string name="emergency_phone_number_label">Emergency Phone Number</string>
+    <string name="add_contact_button">Add Contact</string>
+    <string name="create_emergency_message_header">Create Emergency Message</string>
+    <string name="generate_default_message_button">Generate Default Message</string>
+    <string name="message_configure_button">Configure</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="recordings">Recordings..</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="recording_completed">Recording Completed</string>
+    <string name="deleted_file_message">File has been deleted</string>
+    <string name="no_file_exist_message">No file exist</string>
+    <string name="stop_audio_msg">An audio file is already playing. Please stop that</string>
+    <string name="file_size_label">"File size   "</string>
+    <string name="recording_started_msg">Recording started</string>
+    <string name="permission_granted_msg">Permission Granted</string>
+    <string name="permission_denied_msg">Permission Denied</string>
+    <string name="contact_added_msg">Contact Added Successfully</string>
+    <string name="request_permission">This app needs messaging and location permission</string>
+    <string name="is_granted">"is Granted "</string>
+    <string name="emergency_msg">"Emergency! Please locate and help me! "</string>
+    <string name="request_add_contact">Please add emergency contact details first.</string>
+    <string name="sms_sent">SMS sent.</string>
+    <string name="request_sms_permission">This app needs a permission</string>
+    <string name="call_initiated">Emergency Call Initiated</string>
+    <string name="request_call_permission">This app needs call permission</string>
+    <string name="video_record_success">Video Recorded</string>
+    <string name="call_granted">"is Granted "</string>
+    <string name="request_audio_permission">This app needs audio recording permission</string>
+    <string name="audio_success">Audio Recorded</string>
+    <string name="mic_permission">This app needs a permission</string>
+    <string name="latitude">latitude:</string>
+    <string name="longitude">" longitude:"</string>
+    <string name="recording_success">Recording Completed</string>
+    <string name="audio_deleted">File has been deleted</string>
+    <string name="file_size_text">"File size   "</string>
+    <string name="camera_access_granted_msg">Camera Access Granted</string>
+    <string name="request_audio_access">Need your audio access!</string>
+    <string name="recording_stopped_msg">Recording stopped</string>
+    <string name="call_msg">Calling Emergency Contact.</string>
+    <string name="emergency_message">"Emergency! Please locate and help me! "</string>
+    <string name="request_location">Need your location!</string>
+    <string name="reco">Record Video</string>
+
+
+</resources>
