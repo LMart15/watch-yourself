@@ -30,4 +30,25 @@
     <string name="request_location">Need your location!</string>
     <string name="request_permission">This app needs messaging and location permission</string>
     <string name="is_granted">"is Granted "</string>
+    <string name="permission_msg">This app needs a permission</string>
+    <string name="call_initiated">Emergency Call Initiated</string>
+    <string name="call_permission">This app needs call permission</string>
+    <string name="video_recorded">Video Recorded</string>
+    <string name="audio_recorded">Audio Recorded</string>
+    <string name="audio_permission">This app needs audio recording permission</string>
+    <string name="recording_started">Recording started</string>
+    <string name="latitude">latitude:</string>
+    <string name="longitude">" longitude:"</string>
+    <string name="record_voice">Record Voice</string>
+    <string name="send_msg">Send Emergency Message</string>
+    <string name="make_call">Make Emergency Call</string>
+    <string name="recording_done">Recording Completed</string>
+    <string name="file_deleted">File has been deleted</string>
+    <string name="pause_audio">An audio file is already playing. Please stop that</string>
+    <string name="file_size">"File size   "</string>
+    <string name="permission_granted">Permission Granted</string>
+    <string name="permission_denied">Permission Denied</string>
+    <string name="camera_access_granted">Camera Access Granted</string>
+    <string name="request_video_access">Need your video access!</string>
+    <string name="recording_stopped">Recording stopped</string>
 </resources>
