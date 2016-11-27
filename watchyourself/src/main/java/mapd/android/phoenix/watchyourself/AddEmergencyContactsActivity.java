@@ -46,7 +46,7 @@ public class AddEmergencyContactsActivity extends AppCompatActivity {
         SharedPreferences.Editor edit= sharedPreferences.edit();
         edit.putString(key, value);
         edit.commit();
-        Toast.makeText(AddEmergencyContactsActivity.this,"Contact Added Successfully",Toast.LENGTH_LONG).show();
+        Toast.makeText(AddEmergencyContactsActivity.this, R.string.contact_success,Toast.LENGTH_LONG).show();
         finish();
     }
 
@@ -56,7 +56,7 @@ public class AddEmergencyContactsActivity extends AppCompatActivity {
         String value = sharedPreferences.getString("contact1","null");
         if(value.equals("null"))
         {
-            Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.request_contact,Toast.LENGTH_LONG).show();
         }
         else {
             String[] arr = value.split(":");

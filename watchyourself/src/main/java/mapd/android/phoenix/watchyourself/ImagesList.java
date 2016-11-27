@@ -22,7 +22,7 @@ public class ImagesList {
     public static List<WImages> getCatalog(Resources res){
         if(catalog == null) {
             catalog = new Vector<WImages>();
-            catalog.add(new WImages("Record Video", R.drawable.camera256,"Record Video"));
+            catalog.add(new WImages(context.getString(R.string.record_video), R.drawable.camera256,"Record Video"));
             catalog.add(new WImages("Record Voice", R.drawable.mic256,"Record Audio"));
             catalog.add(new WImages("Msg Emergency Contacts", R.drawable.msg128,"Send Message"));
             catalog.add(new WImages("Call Emergency Contacts", R.drawable.contact128,"Call Now"));

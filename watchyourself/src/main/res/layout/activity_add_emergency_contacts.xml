@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Add Emergency Contact"
+        android:text="@string/add_emergency_contact"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter Name"
+        android:text="@string/enter_name"
         android:id="@+id/textView2"
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
@@ -50,14 +50,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Emergency Phone Number"
+        android:text="@string/emergency_phone_number"
         android:id="@+id/textView3"
         android:layout_alignBaseline="@+id/editTextPhone"
         android:layout_alignBottom="@+id/editTextPhone"
         android:layout_alignParentStart="true"/>
 
     <Button
-        android:text="Add Contact"
+        android:text="@string/add_contact_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editTextPhone"

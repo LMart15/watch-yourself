@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="false"
-        android:textOff="Play"
-        android:textOn="Pause"
+        android:textOff="@string/play"
+        android:textOn="@string/pause"
         android:layout_alignParentRight="true"/>
 </RelativeLayout>

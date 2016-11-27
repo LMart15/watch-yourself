@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         call_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Calling Emergency Contact.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.call_message, Toast.LENGTH_LONG).show();
                 makeCall();
             }
         });
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         {
             try {
 
-                String message = "Emergency! Please locate and help me! "+locationLink;
+                String message = getString(R.string.emergency_message)+locationLink;
 
                 SmsManager smsManager = SmsManager.getDefault();
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 String value = sharedPreferences.getString("contact1","null");
                 if(value.equals("null"))
                 {
-                    Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),R.string.request_contact,Toast.LENGTH_LONG).show();
                 }
                 else {
                     String[] arr=   value.split(":");
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     smsManager.sendTextMessage(phoneno, null, message, null, null);
 
 
-                    Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
                 }
             }
             catch (SecurityException e)
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact", 1);
         String value = sharedPreferences.getString("contact1", "null");
         if (value.equals("null")) {
-            Toast.makeText(getApplicationContext(), "Please add emergency contact details first.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.request_contact, Toast.LENGTH_LONG).show();
         } else {
             String[] arr = value.split(":");
             String phoneno = arr[1];
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     // All good!
                   getLocation();
                 } else {
-                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.request_location, Toast.LENGTH_SHORT).show();
                 }
 
                 break;

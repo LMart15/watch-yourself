@@ -240,7 +240,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     PermissionResponse response = null;
                                     try {
                                         response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
-                                                12, "Watch Yourself", "This app needs messaging and location permission", R.mipmap.ic_launcher).call();
+                                                12, "Watch Yourself", getString(R.string.request_permission), R.mipmap.ic_launcher).call();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -254,13 +254,13 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                 protected void onPostExecute(Boolean aBoolean) {
                                     super.onPostExecute(aBoolean);
 
-                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
                                         getLocation();
                                         try {
 
-                                            String message = "Emergency! Please locate and help me! "+locationLink;
+                                            String message = getString(R.string.emergency_message)+locationLink;
 
                                             SmsManager smsManager = SmsManager.getDefault();
 
@@ -268,7 +268,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                             String value = sharedPreferences.getString("contact1","null");
                                             if(value.equals("null"))
                                             {
-                                                Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(),R.string.request_contact,Toast.LENGTH_LONG).show();
                                             }
                                             else {
                                              String[] arr=   value.split(":");
@@ -277,7 +277,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                                 smsManager.sendTextMessage(EmergContact1, null, message, null, null);
 
 
-                                                Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
                                             }
                                         }
                                         catch (SecurityException e)
@@ -296,7 +296,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
-                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

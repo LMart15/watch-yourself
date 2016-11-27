@@ -9,4 +9,25 @@
     <string name="action_watchyourself">WatchYourself</string>
     <string name="add_emergencyContact">Add Emergency Contact</string>
     <string name="configure_message">Configure Message</string>
+    <string name="add_emergency_contact">Add Emergency Contact</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="emergency_phone_number">Emergency Phone Number</string>
+    <string name="add_contact_btn">Add Contact</string>
+    <string name="create_emergency_message">Create Emergency Message</string>
+    <string name="generate_default_message">Generate Default Message</string>
+    <string name="configure">Configure</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="recordings">Recordings..</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="contact_success">Contact Added Successfully</string>
+    <string name="request_contact">Please add emergency contact details first.</string>
+    <string name="record_video">Record Video</string>
+    <string name="call_message">Calling Emergency Contact.</string>
+    <string name="emergency_message">"Emergency! Please locate and help me! "</string>
+    <string name="sms_sent">SMS sent.</string>
+    <string name="request_location">Need your location!</string>
+    <string name="request_permission">This app needs messaging and location permission</string>
+    <string name="is_granted">"is Granted "</string>
 </resources>
