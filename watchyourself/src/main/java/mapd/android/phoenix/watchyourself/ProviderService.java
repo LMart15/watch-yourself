@@ -4,18 +4,16 @@ package mapd.android.phoenix.watchyourself;
  * Team Phoenix
  */
 
-
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
+//import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+//import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+//import java.util.GregorianCalendar;
 import java.util.Random;
 
 import android.Manifest;
@@ -26,18 +24,18 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.CamcorderProfile;
-import android.media.MediaPlayer;
+//import android.media.CamcorderProfile;
+//import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Environment;
+//import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
+//import android.provider.MediaStore;
+//import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.widget.Toast;
@@ -53,15 +51,15 @@ import mapd.android.phoenix.watchyourself.library.PermissionEverywhere;
 import mapd.android.phoenix.watchyourself.library.PermissionResponse;
 import mapd.android.phoenix.watchyourself.library.PermissionResultCallback;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+//import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CALL_PHONE;
-import static android.Manifest.permission.CAMERA;
+//import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.app.Activity.RESULT_OK;
-import static android.provider.MediaStore.Audio.Media.RECORD_SOUND_ACTION;
+//import static android.app.Activity.RESULT_OK;
+//import static android.provider.MediaStore.Audio.Media.RECORD_SOUND_ACTION;
 
 public class ProviderService extends SAAgent implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "HelloAccessory(P)";
@@ -110,25 +108,14 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
         SA mAccessory = new SA();
         try {
             mAccessory.initialize(this);
-
-//            File audioFile = this.getFilesDir();
-//            OUTPUT_FILE = audioFile.getPath()+"/"+"myAudioFile.3gp";
-
-          // AudioSavePathInDevice = getFilesDir().getAbsolutePath() + "/" + "AudioRecording.3gp";
-
-            //storagePath = Environment.getDataDirectory().getAbsolutePath();
-
-
-//            Log.d(TAG, "AudioSavePathInDevice : result = " + AudioSavePathInDevice);
-//            Toast.makeText(getBaseContext(), AudioSavePathInDevice, Toast.LENGTH_LONG).show();
-
-
-        } catch (SsdkUnsupportedException e) {
+        }
+        catch (SsdkUnsupportedException e) {
             // try to handle SsdkUnsupportedException
             if (processUnsupportedException(e) == true) {
                 return;
             }
-        } catch (Exception e1) {
+        }
+        catch (Exception e1) {
             e1.printStackTrace();
             /*
              * Your application can not use Samsung Accessory SDK. Your application should work smoothly
@@ -137,7 +124,6 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
              */
             stopSelf();
         }
-
     }
 
     @Override
@@ -164,18 +150,19 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
             if (socket != null) {
                 mConnectionHandler = (ServiceConnection) socket;
             }
-        } else if (result == SAAgent.CONNECTION_ALREADY_EXIST) {
+        }
+        else if (result == SAAgent.CONNECTION_ALREADY_EXIST) {
             Log.e(TAG, "onServiceConnectionResponse, CONNECTION_ALREADY_EXIST");
         }
     }
 
-    @Override
-    protected void onAuthenticationResponse(SAPeerAgent peerAgent, SAAuthenticationToken authToken, int error) {
+    //@Override
+    //protected void onAuthenticationResponse(SAPeerAgent peerAgent, SAAuthenticationToken authToken, int error) {
         /*
          * The authenticatePeerAgent(peerAgent) API may not be working properly depending on the firmware
          * version of accessory device. Please refer to another sample application for Security.
          */
-    }
+    //}
 
     @Override
     protected void onError(SAPeerAgent peerAgent, String errorMessage, int errorCode) {
@@ -185,19 +172,22 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
     private boolean processUnsupportedException(SsdkUnsupportedException e) {
         e.printStackTrace();
         int errType = e.getType();
-        if (errType == SsdkUnsupportedException.VENDOR_NOT_SUPPORTED
-                || errType == SsdkUnsupportedException.DEVICE_NOT_SUPPORTED) {
+        if (errType == SsdkUnsupportedException.VENDOR_NOT_SUPPORTED || errType == SsdkUnsupportedException.DEVICE_NOT_SUPPORTED)
+        {
             /*
              * Your application can not use Samsung Accessory SDK. You application should work smoothly
              * without using this SDK, or you may want to notify user and close your app gracefully (release
              * resources, stop Service threads, close UI thread, etc.)
              */
             stopSelf();
-        } else if (errType == SsdkUnsupportedException.LIBRARY_NOT_INSTALLED) {
+        }
+        else if (errType == SsdkUnsupportedException.LIBRARY_NOT_INSTALLED) {
             Log.e(TAG, "You need to install Samsung Accessory SDK to use this application.");
-        } else if (errType == SsdkUnsupportedException.LIBRARY_UPDATE_IS_REQUIRED) {
+        }
+        else if (errType == SsdkUnsupportedException.LIBRARY_UPDATE_IS_REQUIRED) {
             Log.e(TAG, "You need to update Samsung Accessory SDK to use this application.");
-        } else if (errType == SsdkUnsupportedException.LIBRARY_UPDATE_IS_RECOMMENDED) {
+        }
+        else if (errType == SsdkUnsupportedException.LIBRARY_UPDATE_IS_RECOMMENDED) {
             Log.e(TAG, "We recommend that you update your Samsung Accessory SDK before using this application.");
             return false;
         }
@@ -221,18 +211,12 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
         @Override
         public void onReceive(int channelId, byte[] data) {
-
-            try {
+            try
+            {
                 decodedDataUsingUTF8 = new String(data, "UTF-8");
-
                 switch (decodedDataUsingUTF8) {
                     case emergencyMsgNotification:
-                        //call emergencyMsgNotification related function
-                       // Toast.makeText(getBaseContext(), "Emergency Message Sent", Toast.LENGTH_SHORT).show();
-
-
                         if(asyncTest) {
-
                             new AsyncTask<Void, Void, Boolean>() {
 
                                 @Override
@@ -241,12 +225,12 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     try {
                                         response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
                                                 12, "Watch Yourself", "This app needs messaging and location permission", R.mipmap.ic_launcher).call();
-                                    } catch (InterruptedException e) {
+                                    }
+                                    catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
 
                                     boolean isGranted = response.isGranted();
-
                                     return isGranted;
                                 }
 

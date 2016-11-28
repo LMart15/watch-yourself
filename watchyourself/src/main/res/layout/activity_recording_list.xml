@@ -16,13 +16,13 @@
     <Button
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
-        android:text="Start"
+        android:text="@string/start"
         android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/btn_stop"
             android:layout_toRightOf="@id/btn_start"
             android:layout_width="wrap_content"
-            android:text="Stop"
+            android:text="@string/stop"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"/>
 
@@ -33,7 +33,7 @@
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="wrap_content"
-        android:text="Recordings.."
+        android:text="@string/recordings"
         android:padding="5dp"
         android:layout_height="wrap_content"/>
     <ListView
