@@ -199,10 +199,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void askForLocationPermission()
     {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-                    PERMISSION_ACCESS_FINE_LOCATION);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, PERMISSION_ACCESS_FINE_LOCATION);
             googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
         }
         else
@@ -217,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
         switch (requestCode) {
             case PERMISSION_ACCESS_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -248,10 +248,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnected(Bundle bundle) {
         Log.i(MainActivity.class.getSimpleName(), "Connected to Google Play Services!");
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
 
         }
@@ -291,21 +290,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
 
             //You can still do this if you like, you might get lucky:
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(bestProvider);
-            if (location != null) {
+           if (location != null) {
                 Log.e("TAG", "GPS is on");
-               double latitude = location.getLatitude();
-               double longitude = location.getLongitude();
-                //Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-                 locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
 
-            }
+               }
+                else{
+                Toast.makeText(MainActivity.this, "Unable to find your location", Toast.LENGTH_SHORT).show();
+                }
             }
             else{
-                //This is what you need:
-               // locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
+                Toast.makeText(MainActivity.this, "Location Access Permission is denied", Toast.LENGTH_SHORT).show();
             }
         }
         else

@@ -20,7 +20,7 @@
     <string name="start">Démarrer</string>
     <string name="stop">Arrêtez</string>
     <string name="recordings">Enregistrements ..</string>
-    <string name="play">Play</string>
+    <string name="play">Jouer</string>
     <string name="pause">Pause</string>
     <string name="add_contact_req">Please add emergency contact details first.</string>
     <string name="contact_add_success">Contact Added Successfully</string>
