@@ -31,63 +31,47 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import java.util.List;
-/*import android.location.Address;
-import android.location.Geocoder;
-import android.media.CamcorderProfile;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.TextView;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Locale;
-import static android.provider.UserDictionary.Words.APP_ID;*/
+
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private List<WImages> wyimages;
+
+    /* Location Variables */
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     String locationLink;
 
-    /*
-    Video Recording Variables
-     */
+    /*     Video Recording Variables    */
     MediaRecorder recorder;
     SurfaceHolder holder;
     boolean recording = false;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this, ProviderService.class);
         startService(intent);
 
-        askForLocationPermission();
+        askForLocationPermission();  // Called Location Permission
 
-        wyimages = ImagesList.getCatalog(getResources());
+        /*Home Screen Buttons Declarations */
 
         ImageButton msg_button = (ImageButton) findViewById(R.id.icon_msg);
         ImageButton mic_button = (ImageButton) findViewById(R.id.icon_mic);
         ImageButton camera_button = (ImageButton) findViewById(R.id.icon_camera);
         ImageButton call_button = (ImageButton) findViewById(R.id.icon_call);
 
+        /* Send SMS Call */
         msg_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendMessage();
             }
         });
 
+        /* Record Audio Call */
         mic_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,RecordingList.class);
@@ -95,19 +79,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
+        /* Record Video Call */
         camera_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendMessage();
             }
         });
 
+        /* Emergency Calling Call */
         call_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Calling Emergency Contact.", Toast.LENGTH_LONG).show();
                 makeCall();
             }
         });
-}
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return true;
     }
 
+    /* Tool Bar Method */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -149,19 +137,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
     }
-        public void sendMessage()
-        {
-            try {
 
-                String message = "Emergency! Please locate and help me! "+locationLink;
-
+    /* Send SMS Method Starts*/
+    public void sendMessage() {
+        try {
+                String message = getString(R.string.emergency_msg)+locationLink;
                 SmsManager smsManager = SmsManager.getDefault();
-
                 SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
                 String value = sharedPreferences.getString("contact1","null");
+
                 if(value.equals("null"))
                 {
-                    Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
                 }
                 else {
                     String[] arr=   value.split(":");
@@ -170,21 +157,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     smsManager.sendTextMessage(phoneno, null, message, null, null);
 
 
-                    Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
                 }
             }
             catch (SecurityException e)
             {
 
             }
-        }
+        } /* Send SMS Method Ends*/
 
     public void makeCall() {
 
         SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact", 1);
         String value = sharedPreferences.getString("contact1", "null");
         if (value.equals("null")) {
-            Toast.makeText(getApplicationContext(), "Please add emergency contact details first.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
         } else {
             String[] arr = value.split(":");
             String phoneno = arr[1];
@@ -236,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     // All good!
                   getLocation();
                 } else {
-                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.need_location, Toast.LENGTH_SHORT).show();
                 }
 
                 break;
