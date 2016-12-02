@@ -8,7 +8,7 @@ package mapd.android.phoenix.watchyourself;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+
 import android.content.pm.PackageManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -25,8 +25,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +36,6 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
-/**
- * Created by lawrence.martin on 2016-11-22.
- */
 
 public class VideoCapture extends Activity implements View.OnClickListener, SurfaceHolder.Callback {
     MediaRecorder recorder;
@@ -150,7 +145,7 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             recorder.setMaxDuration(5000); // 5 seconds
             recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
           //  recorder.start();
-            Toast.makeText(VideoCapture.this,"Recording started",Toast.LENGTH_LONG).show();
+            Toast.makeText(VideoCapture.this,R.string.recording_started,Toast.LENGTH_LONG).show();
         }
     private void prepareRecorder() {
         recorder.setPreviewDisplay(holder.getSurface());
@@ -198,10 +193,10 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
                             PackageManager.PERMISSION_GRANTED;
 
                     if (StoragePermission && RecordPermission && ReadPermission) {
-                        Toast.makeText(VideoCapture.this, "Permission Granted",
+                        Toast.makeText(VideoCapture.this, R.string.permission_granted,
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(VideoCapture.this, "Permission Denied", Toast.LENGTH_LONG).show();
+                        Toast.makeText(VideoCapture.this, R.string.permission_denied, Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -209,11 +204,11 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             case 2:
                 //for audio
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Camera Access Granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.camera_granted, Toast.LENGTH_SHORT).show();
                     // All good!
                     //startRecording();
                 } else {
-                    Toast.makeText(this, "Need your audio access!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.need_camera_access, Toast.LENGTH_SHORT).show();
                     ActivityCompat.requestPermissions(VideoCapture.this, new String[]{Manifest.permission.RECORD_AUDIO}, 2);
                 }
                 break;
@@ -227,7 +222,7 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             if (recording) {
                 recorder.stop();
                 recording = false;
-                Toast.makeText(VideoCapture.this,"Recording stopped",Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoCapture.this, R.string.recording_stopped,Toast.LENGTH_LONG).show();
                 ///data/user/0/mapd.android.phoenix.watchyourself/files/videocapture_example.mp4
                 //File file = new File(getFilesDir()+"/videocapture_example.mp4");
                 String filePath = getOutputMediaFile(MEDIA_TYPE_VIDEO).getPath();
@@ -245,7 +240,7 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             } else {
                 recording = true;
                 recorder.start();
-                Toast.makeText(VideoCapture.this,"Recording started",Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoCapture.this,R.string.recording_started,Toast.LENGTH_LONG).show();
             }
 
     }

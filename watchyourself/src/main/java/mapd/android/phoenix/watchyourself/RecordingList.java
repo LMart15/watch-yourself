@@ -80,7 +80,7 @@ public class RecordingList extends AppCompatActivity {
                 start.setEnabled(true);
 
 
-                Toast.makeText(RecordingList.this, "Recording Completed",
+                Toast.makeText(RecordingList.this, R.string.recording_done,
                         Toast.LENGTH_LONG).show();
                 getFiles();
 
@@ -96,7 +96,7 @@ public class RecordingList extends AppCompatActivity {
                 if(f.isFile())
                 {
                     f.delete();
-                    Toast.makeText(RecordingList.this,"File has been deleted",Toast.LENGTH_LONG).show();
+                    Toast.makeText(RecordingList.this, R.string.file_deleted,Toast.LENGTH_LONG).show();
                    getFiles();
 
                 }
@@ -178,7 +178,7 @@ public class RecordingList extends AppCompatActivity {
                             {
                                 if(mp.isPlaying())
                                 {
-                                    Toast.makeText(RecordingList.this,"An audio file is already playing. Please stop that",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(RecordingList.this, R.string.stop_audio,Toast.LENGTH_LONG).show();
                                 }
                                 else
                                 {
@@ -186,7 +186,7 @@ public class RecordingList extends AppCompatActivity {
                                         mp.setDataSource(path);
                                         mp.prepare();
                                         mp.start();
-                                        Toast.makeText(RecordingList.this,"File size   "+mp.getDuration(),Toast.LENGTH_LONG).show();
+                                        Toast.makeText(RecordingList.this,getString(R.string.file_size)+mp.getDuration(),Toast.LENGTH_LONG).show();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -234,7 +234,7 @@ public class RecordingList extends AppCompatActivity {
             start.setEnabled(false);
             stop.setEnabled(true);
 
-            Toast.makeText(RecordingList.this, "Recording started",
+            Toast.makeText(RecordingList.this, R.string.recording_started,
                     Toast.LENGTH_LONG).show();
         } else {
             requestPermission();
@@ -283,10 +283,9 @@ public class RecordingList extends AppCompatActivity {
                             PackageManager.PERMISSION_GRANTED;
 
                     if (StoragePermission && RecordPermission) {
-                        Toast.makeText(RecordingList.this, "Permission Granted",
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(RecordingList.this, R.string.permission_granted, Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(RecordingList.this, "Permission Denied", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RecordingList.this, R.string.permission_denied, Toast.LENGTH_LONG).show();
                     }
                 }
                 break;

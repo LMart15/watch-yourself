@@ -4,18 +4,12 @@ package mapd.android.phoenix.watchyourself;
  * Team Phoenix
  */
 
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.FileNotFoundException;
-//import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-//import java.util.Calendar;
 import java.util.Date;
-//import java.util.GregorianCalendar;
 import java.util.Random;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -24,42 +18,31 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-//import android.media.CamcorderProfile;
-//import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
-//import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
-//import android.provider.MediaStore;
-//import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.accessory.*;
-
 import mapd.android.phoenix.watchyourself.library.PermissionEverywhere;
 import mapd.android.phoenix.watchyourself.library.PermissionResponse;
 import mapd.android.phoenix.watchyourself.library.PermissionResultCallback;
-
-//import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CALL_PHONE;
-//import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.SEND_SMS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-//import static android.app.Activity.RESULT_OK;
-//import static android.provider.MediaStore.Audio.Media.RECORD_SOUND_ACTION;
+
 
 public class ProviderService extends SAAgent implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "HelloAccessory(P)";
@@ -87,16 +70,11 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
     //final File dir = new File(this.getFilesDir() + "/nfs/guille/groce/users/nicholsk/workspace3/SQLTest");
 
 
-    /*
-    Location Variables
-     */
+    /*     Location Variables      */
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     String locationLink;
-    /*
-    Location Variables
-     */
 
     public ProviderService() {
         super(TAG, SASOCKET_CLASS);
@@ -224,7 +202,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     PermissionResponse response = null;
                                     try {
                                         response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
-                                                12, "Watch Yourself", "This app needs messaging and location permission", R.mipmap.ic_launcher).call();
+                                                12, "Watch Yourself", getString(R.string.location_permission_msg), R.mipmap.ic_launcher).call();
                                     }
                                     catch (InterruptedException e) {
                                         e.printStackTrace();
@@ -238,13 +216,13 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                 protected void onPostExecute(Boolean aBoolean) {
                                     super.onPostExecute(aBoolean);
 
-                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
                                         getLocation();
                                         try {
 
-                                            String message = "Emergency! Please locate and help me! "+locationLink;
+                                            String message = getString(R.string.emergency_msg)+locationLink;
 
                                             SmsManager smsManager = SmsManager.getDefault();
 
@@ -252,7 +230,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                             String value = sharedPreferences.getString("contact1","null");
                                             if(value.equals("null"))
                                             {
-                                                Toast.makeText(getApplicationContext(),"Please add emergency contact details first.",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
                                             }
                                             else {
                                              String[] arr=   value.split(":");
@@ -261,7 +239,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                                 smsManager.sendTextMessage(EmergContact1, null, message, null, null);
 
 
-                                                Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
                                             }
                                         }
                                         catch (SecurityException e)
@@ -277,10 +255,10 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
 
                             PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
-                                    12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
+                                    12, "Watch Yourself", getString(R.string.permission_msg), R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
-                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -288,7 +266,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                         break;
                     case emergencyCallNotification:
                         //call emergencyCallNotification related function
-                        Toast.makeText(getBaseContext(), "Emergency Call Initiated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), R.string.call_initiated, Toast.LENGTH_SHORT).show();
 
                         if(asyncTest) {
 
@@ -299,7 +277,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     PermissionResponse response = null;
                                     try {
                                         response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CALL_PHONE},
-                                                12, "Watch Yourself", "This app needs call permission", R.mipmap.ic_launcher).call();
+                                                12, "Watch Yourself", getString(R.string.call_permission_msg), R.mipmap.ic_launcher).call();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -313,7 +291,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                 protected void onPostExecute(Boolean aBoolean) {
                                     super.onPostExecute(aBoolean);
 
-                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
                                         try {
@@ -335,17 +313,17 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
 
                             PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CALL_PHONE},
-                                    12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
+                                    12, "Watch Yourself", getString(R.string.permission_msg), R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
-                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                         break;
                     case emergencyVideoNotification:
                         //call emergencyVideoNotification related function
-                        Toast.makeText(getBaseContext(), "Video Recorded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), R.string.video_recorded, Toast.LENGTH_SHORT).show();
 
                         stopRecording();
 //                        if(asyncTest) {
@@ -420,7 +398,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                         break;
                     case emergencyAudioNotification:
                         //call emergencyAudioNotification related function
-                        Toast.makeText(getBaseContext(), "Audio Recorded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), R.string.audio_recorded, Toast.LENGTH_SHORT).show();
 
                         if(asyncTest) {
 
@@ -431,7 +409,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     PermissionResponse response = null;
                                     try {
                                         response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{RECORD_AUDIO,WRITE_EXTERNAL_STORAGE},
-                                                12, "Watch Yourself", "This app needs audio recording permission", R.mipmap.ic_launcher).call();
+                                                12, "Watch Yourself", getString(R.string.adui_permission_msg), R.mipmap.ic_launcher).call();
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -445,7 +423,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                 protected void onPostExecute(Boolean aBoolean) {
                                     super.onPostExecute(aBoolean);
 
-                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
                                         startRecording();
@@ -458,10 +436,10 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
 
                             PermissionEverywhere.getPermission(getApplicationContext(), new String[]{RECORD_AUDIO},
-                                    12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
+                                    12, "Watch Yourself", getString(R.string.permission_msg), R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
-                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ProviderService.this, getString(R.string.is_granted) + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -503,7 +481,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
 
 
-                Toast.makeText(getApplicationContext(), "Recording started",
+                Toast.makeText(getApplicationContext(), R.string.recording_started,
                         Toast.LENGTH_LONG).show();
 
         }
@@ -637,7 +615,7 @@ public void requestAudioPermissions(){
                     Log.e("TAG", "GPS is on");
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                    Toast.makeText(getApplicationContext(), "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.latitude) + latitude + getString(R.string.longitude) + longitude, Toast.LENGTH_SHORT).show();
                     locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
 
                 }

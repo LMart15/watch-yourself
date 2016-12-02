@@ -1,25 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Watch Yourself</string>
+    <string name="app_name">Observez-vous</string>
     <string name="ConnectionAcceptedMsg">Service Connection from HelloAccessory(C) has been accepted.</string>
     <string name="ConnectionEstablishedMsg">Service Connection with HelloAccessory(C) has been established.</string>
     <string name="ConnectionTerminateddMsg">Service Connection with HelloAccessory(C) has been terminated.</string>
     <string name="ConnectionAlreadyExist">Service Connection has already been existed!!!</string>
     <string name="ConnectionAlreadyDisconnected">Service Connection has already been disconnected!!!</string>
-    <string name="action_help">Help</string>
+    <string name="action_help">Aidez-moi</string>
     <string name="action_watchyourself">WatchYourself</string>
-    <string name="add_emergencyContact">Add Emergency Contact</string>
+    <string name="add_emergencyContact">Ajouter contact d\'urgence</string>
     <string name="configure_message">Configure Message</string>
-    <string name="add_emergency_contact">Add Emergency Contact</string>
+    <string name="add_emergency_contact">Ajouter contact d\'urgence</string>
     <string name="enter_name">Enter Name</string>
     <string name="emergency_phone_number">Emergency Phone Number</string>
     <string name="add_contact">Add Contact</string>
     <string name="create_emergency_message">Create Emergency Message</string>
     <string name="generate_default_message">Generate Default Message</string>
     <string name="configure">Configure</string>
-    <string name="start">Start</string>
-    <string name="stop">Stop</string>
-    <string name="recordings">Recordings..</string>
-    <string name="play">Play</string>
+    <string name="start">Démarrer</string>
+    <string name="stop">Arrêtez</string>
+    <string name="recordings">Enregistrements ..</string>
+    <string name="play">Jouer</string>
     <string name="pause">Pause</string>
     <string name="add_contact_req">Please add emergency contact details first.</string>
     <string name="contact_add_success">Contact Added Successfully</string>
