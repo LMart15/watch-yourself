@@ -18,6 +18,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.net.Uri;
+<<<<<<< Updated upstream
+=======
+import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.MediaStore;
+>>>>>>> Stashed changes
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +38,26 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+<<<<<<< Updated upstream
+=======
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.provider.UserDictionary.Words.APP_ID;
+>>>>>>> Stashed changes
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -82,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         /* Record Video Call */
         camera_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendMessage();
+                Intent intent = new Intent(MainActivity.this,VideoCapture.class);
+                startActivity(intent);
+               // askPermissions();
             }
         });
 
@@ -93,9 +121,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 makeCall();
             }
         });
+<<<<<<< Updated upstream
     }
 
+=======
+}
+    public void askPermissions()
+    {
+//
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA ,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,RECORD_AUDIO},
+                    2);
+        }
+        else
+        {
+            Log.e("$$$","###");
+            startActivityForResult(new Intent(
+                    MediaStore.ACTION_VIDEO_CAPTURE), 1);
+        }
+>>>>>>> Stashed changes
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Video Recorded", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater= getMenuInflater();
@@ -227,6 +284,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
 
                 break;
+            case 2:
+                if (grantResults.length > 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean ReadPermission = grantResults[2] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission && ReadPermission) {
+                        Toast.makeText(MainActivity.this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                        startActivityForResult(new Intent(
+                                MediaStore.ACTION_VIDEO_CAPTURE), 1);
+                    } else {
+                        Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_LONG).show();
+                    }
+                }
+                break;
+
+
         }
     }
 
@@ -248,10 +326,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnected(Bundle bundle) {
         Log.i(MainActivity.class.getSimpleName(), "Connected to Google Play Services!");
 
+<<<<<<< Updated upstream
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+=======
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            if(lastLocation !=null) {
+                double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+            }
+>>>>>>> Stashed changes
 
         }
     }
@@ -266,22 +353,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
     }
 
-//public String mapLocation() {
-//    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-//            == PackageManager.PERMISSION_GRANTED) {
-//        Log.e("inside map location","###");
-//        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-//
-//        double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
-//        locationLink= "http://maps.google.com/?q="+lat+","+lon;
-//    }
-//    else
-//    {
-//        ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
-//                PERMISSION_ACCESS_FINE_LOCATION);
-//    }
-//    return "";
-//}
+
     protected void getLocation() {
          String  bestProvider="";
         if (isLocationEnabled(MainActivity.this)) {

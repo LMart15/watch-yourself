@@ -86,8 +86,13 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
         SA mAccessory = new SA();
         try {
             mAccessory.initialize(this);
+<<<<<<< Updated upstream
         }
         catch (SsdkUnsupportedException e) {
+=======
+
+        } catch (SsdkUnsupportedException e) {
+>>>>>>> Stashed changes
             // try to handle SsdkUnsupportedException
             if (processUnsupportedException(e) == true) {
                 return;
@@ -194,6 +199,10 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                 decodedDataUsingUTF8 = new String(data, "UTF-8");
                 switch (decodedDataUsingUTF8) {
                     case emergencyMsgNotification:
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
                         if(asyncTest) {
                             new AsyncTask<Void, Void, Boolean>() {
 
@@ -326,74 +335,6 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                         Toast.makeText(getBaseContext(), R.string.video_recorded, Toast.LENGTH_SHORT).show();
 
                         stopRecording();
-//                        if(asyncTest) {
-//
-//                            new AsyncTask<Void, Void, Boolean>() {
-//
-//                                @Override
-//                                protected Boolean doInBackground(Void... params) {
-//                                    PermissionResponse response = null;
-//                                    try {
-//                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CAMERA},
-//                                                12, "Watch Yourself", "This app needs video recording permission", R.mipmap.ic_launcher).call();
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-//
-//                                    boolean isGranted = response.isGranted();
-//
-//                                    return isGranted;
-//                                }
-//
-//                                @Override
-//                                protected void onPostExecute(Boolean aBoolean) {
-//                                    super.onPostExecute(aBoolean);
-//
-//                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
-//                                    if(aBoolean)
-//                                    {
-//                                        try {
-//
-//                                            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-//                                            mRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-//
-//                                            CamcorderProfile cpHigh = CamcorderProfile
-//                                                    .get(CamcorderProfile.QUALITY_HIGH);
-//                                            mRecorder.setProfile(cpHigh);
-//                                            mRecorder.setOutputFile(OUTPUT_FILE);
-//                                            mRecorder.setMaxDuration(50000); // 50 seconds
-//                                            mRecorder.setMaxFileSize(5000000); // Approximately 5 megabytes
-//
-//                                            try {
-//                                                mRecorder.prepare();
-//                                            } catch (IOException e) {
-//                                                Log.e(LOG_TAG, "prepare() failed");
-//                                            }
-//
-//                                            mRecorder.start();
-//
-//                                        }
-//                                        catch (SecurityException e)
-//                                        {
-//
-//                                        }
-//                                    }
-//                                }
-//                            }.execute();
-//
-//
-//                        }else {
-//
-//
-//                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CAMERA},
-//                                    12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
-//                                @Override
-//                                public void onComplete(PermissionResponse permissionResponse) {
-//                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//                        }
-//
 
                         break;
                     case emergencyAudioNotification:
@@ -525,56 +466,7 @@ public void requestAudioPermissions(){
     public String getCurrentTimeStamp() {
         return new SimpleDateFormat("_yyyyMMdd_HH_mm_ss").format(new Date());
     }
- /*
-    LOcation data
-     */
 
-//    public void askForLocationPermission()
-//    {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(getApplicationContext(), new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-//                    PERMISSION_ACCESS_FINE_LOCATION);
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//        }
-//        else
-//        {
-//            Log.e("$$$","###");
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//            getLocation();
-//        }
-//
-//
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case PERMISSION_ACCESS_FINE_LOCATION:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // All good!
-//                    getLocation();
-//                } else {
-//                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                break;
-//        }
-//    }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (googleApiClient != null) {
-//            googleApiClient.connect();
-//        }
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        googleApiClient.disconnect();
-//        super.onStop();
-//    }
 
     @Override
     public void onConnected(Bundle bundle) {

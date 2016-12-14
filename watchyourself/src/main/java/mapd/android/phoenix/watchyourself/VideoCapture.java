@@ -48,8 +48,12 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//setContentView(R.layout.video);
-        recorder = new MediaRecorder();
+        setContentView(R.layout.video);
+        SurfaceView mSurfaceView = (SurfaceView) findViewById(R.id.CameraView);
+       SurfaceHolder mHolder = mSurfaceView.getHolder();
+        mHolder.addCallback(this);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mSurfaceView.setOnClickListener(this);
         askPermissions();
     }
         public void askPermissions()
@@ -63,28 +67,11 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             else
             {
                 Log.e("$$$","###");
-                initRecorder();
+
             }
 
         }
-    private void initRecorder() {
-        recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 
-        CamcorderProfile cpHigh = CamcorderProfile
-                .get(CamcorderProfile.QUALITY_HIGH);
-        recorder.setProfile(cpHigh);
-        //String filePATH = getFilesDir()+"/videocapture_example.mp4";
-        //recorder.setOutputFile(filePATH);
-        String filePath = getOutputMediaFile(MEDIA_TYPE_VIDEO).getPath();
-        Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
-        recorder.setOutputFile(filePath);
-        recorder.setMaxDuration(50000); // 50 seconds
-        recorder.setMaxFileSize(5000000);
-//
-        setContent();
-
-    }
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
@@ -128,11 +115,8 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
         return mediaFile;
     }
 
-        public void setContent()
-        {
 
-            setContentView(R.layout.video);
-
+<<<<<<< Updated upstream
             SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
             holder = cameraView.getHolder();
             holder.addCallback(this);
@@ -160,11 +144,13 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
             finish();
         }
     }
+=======
+>>>>>>> Stashed changes
 
 
 
     public void surfaceCreated(SurfaceHolder holder) {
-        prepareRecorder();
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -218,6 +204,7 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
     @Override
     public void onClick(View v) {
 
+<<<<<<< Updated upstream
             Log.e("########","!!!!!!!");
             if (recording) {
                 recorder.stop();
@@ -241,7 +228,38 @@ public class VideoCapture extends Activity implements View.OnClickListener, Surf
                 recording = true;
                 recorder.start();
                 Toast.makeText(VideoCapture.this,R.string.recording_started,Toast.LENGTH_LONG).show();
+=======
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+
+        recorder.setOutputFile(getOutputMediaFile(0)+"");
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        if(!recording)
+        {
+           // btn.setText("Stop Recording");
+            try {
+                recorder.prepare();
+
+            }  catch (IOException e) {
+                e.printStackTrace();
+>>>>>>> Stashed changes
             }
+            recorder.start();
+            recording = true;
+            Toast.makeText(VideoCapture.this,"Started",Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+         //   btn.setText("Start Recording");
+            recording = false;
+            recorder.stop();
+            recorder.reset();
+            recorder.release();
+
+            recorder = null;
+            Toast.makeText(VideoCapture.this,"Stopped",Toast.LENGTH_LONG).show();
+        }
 
     }
 }
