@@ -250,8 +250,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+//            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+//            double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
+
+            getLocation();
 
         }
     }
