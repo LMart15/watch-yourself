@@ -1,91 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical"
-    android:weightSum="5">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="#ffffff">
 
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:layout_alignParentTop="true"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/my_toolbar" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F44336"
-        android:layout_weight="2">
-        <ImageButton
-            android:id="@+id/icon_msg"
-            android:layout_width="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:layout_alignParentBottom="true"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_msg_192_blue"
-            android:background="@android:color/transparent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#757575"
-        android:layout_weight="1"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
-
-        <ImageButton
-            android:id="@+id/icon_mic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_mic_64_white"
-            android:background="@android:color/transparent"
-            android:layout_alignParentLeft="true"
-            android:paddingLeft="32dp"
-            android:layout_centerVertical="true"/>
-
-        <!--<View-->
-            <!--android:id="@+id/view"-->
-            <!--android:layout_width="1dip"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="#FFFFFF"/>-->
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:weightSum="4">
 
         <ImageButton
             android:id="@+id/icon_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_camera_64_white"
-            android:background="@android:color/transparent"
-            android:layout_alignParentRight="true"
-            android:paddingRight="32dp"
-            android:layout_centerVertical="true"/>
+            android:src="@drawable/ic_photo_camera_black_48dp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"/>
 
-    </RelativeLayout>
+        <ImageButton
+            android:id="@+id/icon_mic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mic_black_48dp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#F44336"
-        android:layout_weight="2">
         <ImageButton
             android:id="@+id/icon_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_call_192_blue"
-            android:background="@android:color/transparent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
+            android:src="@drawable/ic_phone_in_talk_black_48dp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"/>
 
-    </RelativeLayout>
+        <ImageButton
+            android:id="@+id/icon_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_sms_failed_black_48dp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"/>
+        </LinearLayout>
 
-    <!--<GridView-->
-        <!--android:id="@+id/ListViewCatalog"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:background="#ff0000"-->
-        <!--android:verticalSpacing="5px"-->
-        <!--android:horizontalSpacing="5px"-->
-        <!--android:cacheColorHint="#ffffff"-->
-        <!--android:clickable="true"-->
-        <!--android:numColumns="2">-->
-    <!--</GridView>-->
-</LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+</RelativeLayout>
