@@ -4,7 +4,6 @@ package mapd.android.phoenix.watchyourself;
  * Team Phoenix
  */
 
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -18,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -75,6 +75,12 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     String locationLink;
+// alarm variables
+    MediaPlayer mp = new MediaPlayer();
+    boolean playing=false;
+
+    // record audio
+    boolean audioRecording = false;
 
     public ProviderService() {
         super(TAG, SASOCKET_CLASS);
@@ -189,22 +195,20 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
 
         @Override
         public void onReceive(int channelId, byte[] data) {
-            try
-            {
+            try {
                 decodedDataUsingUTF8 = new String(data, "UTF-8");
                 switch (decodedDataUsingUTF8) {
                     case emergencyMsgNotification:
-                        if(asyncTest) {
+                        if (asyncTest) {
                             new AsyncTask<Void, Void, Boolean>() {
 
                                 @Override
                                 protected Boolean doInBackground(Void... params) {
                                     PermissionResponse response = null;
                                     try {
-                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
+                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS, ACCESS_FINE_LOCATION},
                                                 12, "Watch Yourself", getString(R.string.location_permission_msg), R.mipmap.ic_launcher).call();
-                                    }
-                                    catch (InterruptedException e) {
+                                    } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
 
@@ -217,33 +221,28 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     super.onPostExecute(aBoolean);
 
                                     Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
-                                    if(aBoolean)
-                                    {
+                                    if (aBoolean) {
                                         getLocation();
                                         try {
 
-                                            String message = getString(R.string.emergency_msg)+locationLink;
+                                            String message = getString(R.string.emergency_msg) + locationLink;
 
                                             SmsManager smsManager = SmsManager.getDefault();
 
-                                            SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
-                                            String value = sharedPreferences.getString("contact1","null");
-                                            if(value.equals("null"))
-                                            {
-                                                Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
-                                            }
-                                            else {
-                                             String[] arr=   value.split(":");
-                                                EmergContact1= arr[1];
-                                                Log.e("phone no :: ",EmergContact1);
+                                            SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact", 1);
+                                            String value = sharedPreferences.getString("contact1", "null");
+                                            if (value.equals("null")) {
+                                                Toast.makeText(getApplicationContext(), R.string.add_contact_req, Toast.LENGTH_LONG).show();
+                                            } else {
+                                                String[] arr = value.split(":");
+                                                EmergContact1 = arr[1];
+                                                Log.e("phone no :: ", EmergContact1);
                                                 smsManager.sendTextMessage(EmergContact1, null, message, null, null);
 
 
                                                 Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
                                             }
-                                        }
-                                        catch (SecurityException e)
-                                        {
+                                        } catch (SecurityException e) {
 
                                         }
                                     }
@@ -251,10 +250,10 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                             }.execute();
 
 
-                        }else {
+                        } else {
 
 
-                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS,ACCESS_FINE_LOCATION},
+                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{SEND_SMS, ACCESS_FINE_LOCATION},
                                     12, "Watch Yourself", getString(R.string.permission_msg), R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
                                 @Override
                                 public void onComplete(PermissionResponse permissionResponse) {
@@ -268,7 +267,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                         //call emergencyCallNotification related function
                         Toast.makeText(getBaseContext(), R.string.call_initiated, Toast.LENGTH_SHORT).show();
 
-                        if(asyncTest) {
+                        if (asyncTest) {
 
                             new AsyncTask<Void, Void, Boolean>() {
 
@@ -292,16 +291,13 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     super.onPostExecute(aBoolean);
 
                                     Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
-                                    if(aBoolean)
-                                    {
+                                    if (aBoolean) {
                                         try {
                                             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + EmergContact1));
                                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(intent);
 
-                                        }
-                                        catch (SecurityException e)
-                                        {
+                                        } catch (SecurityException e) {
 
                                         }
                                     }
@@ -309,7 +305,7 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                             }.execute();
 
 
-                        }else {
+                        } else {
 
 
                             PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CALL_PHONE},
@@ -323,82 +319,25 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                         break;
                     case emergencyVideoNotification:
                         //call emergencyVideoNotification related function
-                        Toast.makeText(getBaseContext(), R.string.video_recorded, Toast.LENGTH_SHORT).show();
+                        if (asyncTest) {;
 
-                        stopRecording();
-//                        if(asyncTest) {
-//
-//                            new AsyncTask<Void, Void, Boolean>() {
-//
-//                                @Override
-//                                protected Boolean doInBackground(Void... params) {
-//                                    PermissionResponse response = null;
-//                                    try {
-//                                        response = PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CAMERA},
-//                                                12, "Watch Yourself", "This app needs video recording permission", R.mipmap.ic_launcher).call();
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-//
-//                                    boolean isGranted = response.isGranted();
-//
-//                                    return isGranted;
-//                                }
-//
-//                                @Override
-//                                protected void onPostExecute(Boolean aBoolean) {
-//                                    super.onPostExecute(aBoolean);
-//
-//                                    Toast.makeText(ProviderService.this, "is Granted " + aBoolean, Toast.LENGTH_SHORT).show();
-//                                    if(aBoolean)
-//                                    {
-//                                        try {
-//
-//                                            mRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-//                                            mRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-//
-//                                            CamcorderProfile cpHigh = CamcorderProfile
-//                                                    .get(CamcorderProfile.QUALITY_HIGH);
-//                                            mRecorder.setProfile(cpHigh);
-//                                            mRecorder.setOutputFile(OUTPUT_FILE);
-//                                            mRecorder.setMaxDuration(50000); // 50 seconds
-//                                            mRecorder.setMaxFileSize(5000000); // Approximately 5 megabytes
-//
-//                                            try {
-//                                                mRecorder.prepare();
-//                                            } catch (IOException e) {
-//                                                Log.e(LOG_TAG, "prepare() failed");
-//                                            }
-//
-//                                            mRecorder.start();
-//
-//                                        }
-//                                        catch (SecurityException e)
-//                                        {
-//
-//                                        }
-//                                    }
-//                                }
-//                            }.execute();
-//
-//
-//                        }else {
-//
-//
-//                            PermissionEverywhere.getPermission(getApplicationContext(), new String[]{CAMERA},
-//                                    12, "Watch Yourself", "This app needs a permission", R.mipmap.ic_launcher).enqueue(new PermissionResultCallback() {
-//                                @Override
-//                                public void onComplete(PermissionResponse permissionResponse) {
-//                                    Toast.makeText(ProviderService.this, "is Granted " + permissionResponse.isGranted(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//                        }
-//
-
+                            if(!playing) {
+                                audioPlayer();
+                                playing= true;
+                            }
+                            else
+                            {
+                                mp.stop();
+                                playing = false;
+                                mp = new MediaPlayer();
+                            }
+                        }
                         break;
+
+
                     case emergencyAudioNotification:
                         //call emergencyAudioNotification related function
-                        Toast.makeText(getBaseContext(), R.string.audio_recorded, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getBaseContext(), R.string.audio_recorded, Toast.LENGTH_SHORT).show();
 
                         if(asyncTest) {
 
@@ -426,7 +365,14 @@ public class ProviderService extends SAAgent implements GoogleApiClient.Connecti
                                     Toast.makeText(ProviderService.this, getString(R.string.is_granted) + aBoolean, Toast.LENGTH_SHORT).show();
                                     if(aBoolean)
                                     {
-                                        startRecording();
+                                        if(!audioRecording) {
+                                            startRecording();
+                                            audioRecording = true;
+                                        }
+                                        else {
+                                            stopRecording();
+                                            audioRecording=false;
+                                        }
                                     }
                                 }
                             }.execute();
@@ -529,52 +475,7 @@ public void requestAudioPermissions(){
     LOcation data
      */
 
-//    public void askForLocationPermission()
-//    {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(getApplicationContext(), new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
-//                    PERMISSION_ACCESS_FINE_LOCATION);
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//        }
-//        else
-//        {
-//            Log.e("$$$","###");
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//            getLocation();
-//        }
-//
-//
-//    }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case PERMISSION_ACCESS_FINE_LOCATION:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // All good!
-//                    getLocation();
-//                } else {
-//                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                break;
-//        }
-//    }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (googleApiClient != null) {
-//            googleApiClient.connect();
-//        }
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        googleApiClient.disconnect();
-//        super.onStop();
-//    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -636,4 +537,24 @@ public void requestAudioPermissions(){
         //...............
         return true;
     }
+
+
+
+    public void audioPlayer(){
+        //set up MediaPlayer
+
+
+        String RES_PREFIX = "android.resource://"+getPackageName()+"/";
+
+        try {
+            mp.setDataSource(getApplicationContext(),
+                    Uri.parse(RES_PREFIX + R.raw.sound));
+            mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("tag exception",e.toString());
+        }
+    }
+
 }

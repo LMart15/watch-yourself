@@ -9,24 +9,20 @@ import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-
-
-        import android.content.Intent;
-        import android.media.MediaPlayer;
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.util.Log;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
+import android.media.MediaPlayer;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-        import android.widget.BaseAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-        import android.widget.TextView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -36,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-        import java.util.List;
+import java.util.List;
 import java.util.Random;
 
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -56,6 +52,11 @@ public class RecordingList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording_list);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+
         listView = (ListView)findViewById(R.id.list);
         start= (Button)findViewById(R.id.btn_start);
         stop= (Button)findViewById(R.id.btn_stop);

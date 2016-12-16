@@ -6,7 +6,6 @@ package mapd.android.phoenix.watchyourself;
 
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -26,10 +24,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationListener;
 
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
-import android.media.MediaRecorder;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -43,11 +39,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static mapd.android.phoenix.watchyourself.AddEmergencyContactsActivity.SEND_SMS;
+
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -57,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient googleApiClient;
     private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
     String locationLink;
+    MediaPlayer mp = new MediaPlayer();
 
     double latitude;
     double longitude;
@@ -67,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView tAddress;
     String country;
 
-    /*     Video Recording Variables    */
-    MediaRecorder recorder;
-    SurfaceHolder holder;
-    boolean recording = false;
+    // sms variables
+
+    String phoneno,msg;
+
 
     //location related variables
     GoogleMap mGoogleMap;
@@ -80,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Location mLastLocation;
     Marker mCurrLocationMarker;
 
+    // video capture
+   boolean playing = false;
 
 
     @Override
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         msg_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Toast.makeText(getApplicationContext(), "Messaging Emergency Contact.", Toast.LENGTH_LONG).show();
+
                 sendMessage();
             }
         });
@@ -128,7 +130,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        /* Record Video Call */
         camera_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendMessage();
+                // video intent
+                if(!playing) {
+                    audioPlayer();
+                    playing= true;
+                }
+                else
+                {
+                    mp.stop();
+                    playing = false;
+                    mp = new MediaPlayer();
+                }
             }
         });
 //
@@ -158,9 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intentC = new Intent(MainActivity.this, AddEmergencyContactsActivity.class);
                 startActivity(intentC);
                 return true;
-//            case R.id.configure_message:
-//                Intent intentM = new Intent(MainActivity.this, CreateEmergencyMessageActivity.class);
-//                startActivity(intentM);
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -241,16 +251,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng latLng = new LatLng(latitude, longitude);
+        locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
+        //Toast.makeText(getApplicationContext(), locationLink,Toast.LENGTH_SHORT).show();
+
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+
+        // save location link in shared preferences
+        saveLocationLinkSharedPref(locationLink);
+
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
         //optionally, stop location updates if only current location is needed
         if (mGoogleApiClient != null) {
@@ -260,6 +279,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -279,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MainActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -290,8 +311,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
+
+        }
+        }
+        else
+        {
+            //api < 23
+            if (mGoogleApiClient == null) {
+                buildGoogleApiClient();
+            }
+            mGoogleMap.setMyLocationEnabled(true);
         }
     }
 
@@ -324,6 +355,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return;
             }
+            case SEND_SMS:
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                        sendSMS(phoneno, msg);
+                    } else {
+
+                        Toast.makeText(this, "SEND_SMS Denied", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    break;
+
 
             // other 'case' lines to check for other
             // permissions this app might request
@@ -332,34 +374,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     /* Send SMS Method Starts*/
-    public void sendMessage() {
-        try {
-                String message = getString(R.string.emergency_msg)+locationLink;
-                SmsManager smsManager = SmsManager.getDefault();
-                SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
-                String value = sharedPreferences.getString("contact1","null");
-
-                if(value.equals("null"))
-                {
-                    Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
-                }
-                else {
-                    String[] arr=   value.split(":");
-                    String phoneno= arr[1];
-                    Log.e("phone no :: ",phoneno);
-
-                    //messaging stopping here???
-                    smsManager.sendTextMessage(phoneno, null, message, null, null);
-
-
-                    Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
-                }
-            }
-            catch (SecurityException e)
-            {
-
-            }
-        } /* Send SMS Method Ends*/
+//    public void sendMessageNew() {
+//        try {
+//                String message = getString(R.string.emergency_msg)+locationLink;
+//                SmsManager smsManager = SmsManager.getDefault();
+//                SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact",1);
+//                String value = sharedPreferences.getString("contact1","null");
+//
+//                if(value.equals("null"))
+//                {
+//                    Toast.makeText(getApplicationContext(), R.string.add_contact_req,Toast.LENGTH_LONG).show();
+//        }
+//                else {
+//                    String[] arr=   value.split(":");
+//                    String phoneno= arr[1];
+//                    Log.e("phone no :: ",phoneno);
+//
+//                    //messaging stopping here???
+//                    smsManager.sendTextMessage(phoneno, null, message, null, null);
+//
+//
+//                    Toast.makeText(getApplicationContext(), R.string.sms_sent, Toast.LENGTH_LONG).show();
+//                }
+//            }
+//            catch (SecurityException e)
+//            {
+//
+//            }
+//        } /* Send SMS Method Ends*/
 
     public void makeCall() {
 
@@ -388,124 +430,105 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    /*
-    LOcation data
-     */
-//
-//    public void askForLocationPermission()
-//    {
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION }, PERMISSION_ACCESS_FINE_LOCATION);
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//        }
-//        else
-//        {
-//            Log.e("$$$","###");
-//            googleApiClient = new GoogleApiClient.Builder(this, this, this).addApi(LocationServices.API).build();
-//            getLocation();
-//        }
-//
-//
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//
-//        switch (requestCode) {
-//            case PERMISSION_ACCESS_FINE_LOCATION:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // All good!
-//                  getLocation();
-//                } else {
-//                    Toast.makeText(this, R.string.need_location, Toast.LENGTH_SHORT).show();
-//                }
-//
-//                break;
-//        }
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (googleApiClient != null) {
-//            googleApiClient.connect();
-//        }
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        googleApiClient.disconnect();
-//        super.onStop();
-//    }
-//
-//    @Override
-//    public void onConnected(Bundle bundle) {
-//        Log.i(MainActivity.class.getSimpleName(), "Connected to Google Play Services!");
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//
-//            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-//            if (lastLocation != null) {
-//                double lat = lastLocation.getLatitude(), lon = lastLocation.getLongitude();
-//                getLocation();
-//            }else{
-//                Toast.makeText(MainActivity.this, "Unable to find your location", Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }
-//    }
-//
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(ConnectionResult connectionResult) {
-//        Log.i(MainActivity.class.getSimpleName(), "Can't connect to Google Play Services!");
-//    }
-//
-//
-//    protected void getLocation() {
-//         String  bestProvider="";
-//        if (isLocationEnabled(MainActivity.this)) {
-//            LocationManager locationManager = (LocationManager)  this.getSystemService(Context.LOCATION_SERVICE);
-//            Criteria criteria = new Criteria();
-//            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
-//
-//            //You can still do this if you like, you might get lucky:
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            Location location = locationManager.getLastKnownLocation(bestProvider);
-//           if (location != null) {
-//                Log.e("TAG", "GPS is on");
-//                double latitude = location.getLatitude();
-//                double longitude = location.getLongitude();
-//                Toast.makeText(MainActivity.this, "latitude:" + latitude + " longitude:" + longitude, Toast.LENGTH_SHORT).show();
-//                locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
-//
-//               }
-//                else{
-//                Toast.makeText(MainActivity.this, "Unable to find your location", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//            else{
-//                Toast.makeText(MainActivity.this, "Location Access Permission is denied", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        else
-//        {
-//            //prompt user to enable location....
-//            //.................
-//        }
-//    }
-//    public static boolean isLocationEnabled(Context context)
-//    {
-//        //...............
-//        return true;
-//    }
-    /*
-    Location code ends
-     */
 
+    public void saveLocationLinkSharedPref(String link)
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("Location_Link",1);
+        SharedPreferences.Editor edit= sharedPreferences.edit();
+        edit.putString("Location_Link", link);
+        edit.commit();
+    }
+
+  // message <code></code>
+
+    /* Send SMS Method Starts*/
+    public void sendMessage() {
+
+        try {
+            SharedPreferences sharedPreferences1 = getSharedPreferences("Location_Link",1);
+            String locationLink = sharedPreferences1.getString("Location_Link","");
+            String message = getString(R.string.emergency_msg) + locationLink;
+            SmsManager smsManager = SmsManager.getDefault();
+            SharedPreferences sharedPreferences = getSharedPreferences("Emer_contact", 1);
+            String value = sharedPreferences.getString("contact1", "null");
+
+            if (value.equals("null")) {
+                Toast.makeText(getApplicationContext(), R.string.add_contact_req, Toast.LENGTH_LONG).show();
+            } else {
+                String[] arr = value.split(":");
+                String phoneno = arr[1];
+                Log.e("phone no :: ", phoneno);
+                this.phoneno=phoneno;
+                msg=message;
+                checkAndroidVersionforSms(phoneno,message);
+
+            }
+        } catch (SecurityException e) {
+            Log.e("exception",e.toString());
+        }
+    }
+//        public void checkAndroidVersionforVideo()
+//        {
+//            if (Build.VERSION.SDK_INT >= 23) {
+//
+//                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA ,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,RECORD_AUDIO},
+//                            REQUEST_VIDEO_CAPTURED);
+//                }
+//                else
+//                {
+//                    recordVideo();
+//                }
+//                }else{
+//                    recordVideo();
+//                }
+//
+//        }
+//
+//    public void recordVideo()
+//    {
+//        Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
+//        startActivityForResult(intent, REQUEST_VIDEO_CAPTURED);
+//    }
+
+    public void checkAndroidVersionforSms(String phoneNo, String message){
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            int checkCallPhonePermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS);
+            if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.SEND_SMS},SEND_SMS);
+                return;
+            }else{
+                sendSMS(phoneNo, message);
+            }
+        } else {
+            sendSMS(phoneNo, message);
+        }
+    }
+
+
+    public void sendSMS(String phoneNo,String message)
+    {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNo, null, message, null, null);
+        Toast.makeText(this,getResources().getString(R.string.sms_sent),Toast.LENGTH_SHORT).show();
+
+    }
+    public void audioPlayer(){
+        //set up MediaPlayer
+
+String RES_PREFIX = "android.resource://"+getPackageName()+"/";
+
+        try {
+            mp.setDataSource(getApplicationContext(),
+                    Uri.parse(RES_PREFIX + R.raw.sound));
+            mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("tag exception",e.toString());
+        }
+    }
 }

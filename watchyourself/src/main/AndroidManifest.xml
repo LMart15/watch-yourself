@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_watchyourself_logo"
@@ -75,7 +76,6 @@
         <activity android:name=".CreateEmergencyMessageActivity">
         </activity>
         <activity android:name=".RecordingList"></activity>
-        <activity android:name=".VideoCapture"></activity>
     </application>
 
 </manifest>
