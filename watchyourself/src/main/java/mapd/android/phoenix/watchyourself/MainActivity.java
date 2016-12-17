@@ -40,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /* Location Variables */
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 1;
     private GoogleApiClient googleApiClient;
-    private static final String APP_ID = "AIzaSyDn9osFVDgjKdsqnlP8btgkn13s4eqiui0";
+    private static final String APP_ID = "AIzaSyDKZ7zO-LyIf8qm5XJ_GB6wmPUPgJhtf-4";
     String locationLink;
     MediaPlayer mp = new MediaPlayer();
 
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    private int PROXIMITY_RADIUS = 5000;
 
     // video capture
    boolean playing = false;
@@ -100,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Intent intent = new Intent(MainActivity.this, ProviderService.class);
         startService(intent);
-
-        //askForLocationPermission();  // Called Location Permission
 
         /*Home Screen Buttons Declarations */
 
@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -251,12 +252,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //Place current location marker
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        LatLng latLng = new LatLng(latitude, longitude);
+        final double latitude = location.getLatitude();
+        final double longitude = location.getLongitude();
+        latLng = new LatLng(latitude, longitude);
         locationLink= "http://maps.google.com/?q="+latitude+","+longitude;
-        //Toast.makeText(getApplicationContext(), locationLink,Toast.LENGTH_SHORT).show();
-
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
@@ -267,14 +266,47 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // save location link in shared preferences
         saveLocationLinkSharedPref(locationLink);
 
-        //move map camera
+//        //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
         //optionally, stop location updates if only current location is needed
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+
+        Button btnHospital = (Button) findViewById(R.id.btnHospital);
+        btnHospital.setOnClickListener(new View.OnClickListener() {
+            String Hospital = "hospital";
+            @Override
+            public void onClick(View v) {
+                Log.d("onClick", "Button is Clicked");
+                String url = getUrl(latitude, longitude, Hospital);
+                Object[] DataTransfer = new Object[2];
+                DataTransfer[0] = mGoogleMap;
+                DataTransfer[1] = url;
+                Log.d("onClick", url);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+                getNearbyPlacesData.execute(DataTransfer);
+            }
+        });
+
+        Button btnPolice = (Button) findViewById(R.id.btnPolice);
+        btnPolice.setOnClickListener(new View.OnClickListener() {
+            String Police = "police";
+            @Override
+            public void onClick(View v) {
+                Log.d("onClick", "Button is Clicked");
+                String url = getUrl(latitude, longitude, Police);
+                Object[] DataTransfer = new Object[2];
+                DataTransfer[0] = mGoogleMap;
+                DataTransfer[1] = url;
+                Log.d("onClick", url);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+                getNearbyPlacesData.execute(DataTransfer);
+            }
+        });
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -324,6 +356,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             mGoogleMap.setMyLocationEnabled(true);
         }
+    }
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "AIzaSyANI4mN0Rq-LogS147dCIKWX7w1dskh5CY");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
     }
 
     @Override

@@ -69,7 +69,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDKZ7zO-LyIf8qm5XJ_GB6wmPUPgJhtf-4"/>
+            android:value="AIzaSyAMlaakBxXmka_HCUr1VXCpSgpWTczJuJs"/>
 
         <activity android:name=".AddEmergencyContactsActivity">
         </activity>
